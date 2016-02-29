@@ -1,11 +1,24 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var ReactFire = require('reactfire');
+var Firebase = require('firebase');
+var Header = require('./header');
+var rootUrl = 'https://glowing-torch-2954.firebaseio.com/';
 
 var Hello = React.createClass({
+  mixins: [ ReactFire ],
+  componentWillMount: function(){
+    this.bindAsObject(new Firebase(rootUrl + 'items/'), 'items');
+  },
   render: function() {
-    return <h1 className="red">
-      Hello!
-    </h1>
+    return <div className="row panel-default">
+      <div className="col-md-8 col-md-offset-2">
+        <h2 className="text-center">
+          To-Do List
+        </h2>
+        <Header />
+      </div>
+    </div>
   }
 });
 
