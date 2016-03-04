@@ -3,12 +3,21 @@ var ReactDOM = require('react-dom');
 var ReactFire = require('reactfire');
 var Firebase = require('firebase');
 var Header = require('./header');
+var List = require('./list');
 var rootUrl = 'https://glowing-torch-2954.firebaseio.com/';
 
 var Hello = React.createClass({
   mixins: [ ReactFire ],
+  getInitialState: function(){
+    return{
+      items: {},
+      loaded: false
+    }
+  },
   componentWillMount: function(){
-    this.bindAsObject(new Firebase(rootUrl + 'items/'), 'items');
+    fb = new Firebase(rootUrl + 'items/');
+    this.bindAsObject(fb, 'items');
+    fb.on('value', this.handleDataLoaded);
   },
   render: function() {
     return <div className="row panel-default">
@@ -17,8 +26,14 @@ var Hello = React.createClass({
           To-Do List
         </h2>
         <Header itemsStore={this.firebaseRefs.items} />
+        <div className={"content" + (this.state.loaded ? 'loaded' : '')}>
+          <List items={this.state.items} />
+        </div>
       </div>
     </div>
+  },
+  handleDataLoaded: function(){
+    this.setState({loaded: true});
   }
 });
 
